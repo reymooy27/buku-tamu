@@ -8,17 +8,17 @@ export default async function handler(req, res) {
         data:{
           nama: input.nama,
           alamat: input.alamat,
-          hp: parseInt(input.hp,10),
+          hp: input.hp,
           jenisKelamin: input.jenisKelamin,
           keterangan: input.keterangan
         }
       })
-      res.status(200).send('Berhasil')
+      res.status(200).json('Berhasil')
     }catch(err){
       console.log(err)
-      res.status(400).send(err)
+      res.status(400).json(err)
     }
   } else {
-    res.status(404).send('Not Found')
+    res.status(404).json('Not Found')
   }
 }
