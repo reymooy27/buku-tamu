@@ -12,7 +12,7 @@ export default function Dashboard({tamu}) {
       <div>
         <h1 className='text-2xl'>Dashboard</h1>
         {tamu.map(t=>(
-          <p>{t.nama}</p>
+          <p key={t.id}>{t.nama}</p>
         ))}
       </div>
     </>
@@ -22,7 +22,6 @@ export default function Dashboard({tamu}) {
 export async function getServerSideProps(context) {
 
   const tamu = await prisma.tamu.findMany()
-  console.log(tamu)
   return {
     props: {
       tamu: JSON.parse(JSON.stringify(tamu)) 
