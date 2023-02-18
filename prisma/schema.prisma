@@ -15,9 +15,10 @@ model Tamu {
   id Int @id @default(autoincrement())
   nama String
   alamat String
-  hp Int
-  jenisKelamin String
+  hp String?
+  jenisKelamin String?
   jamMasuk DateTime @default(now())
   jamKeluar DateTime?
-  keterangan String
+  keterangan String?
+  kepuasan String?
 }
