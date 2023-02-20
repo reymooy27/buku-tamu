@@ -2,7 +2,7 @@
 
 import Dialog from '@/components/Dialog'
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import { useDisclosure } from '@chakra-ui/react'
+import { Spinner, useDisclosure } from '@chakra-ui/react'
 import { Inter } from '@next/font/google'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -12,8 +12,9 @@ export default function Home() {
 
   const {onOpen} = useDisclosure()
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 	const [disabled, setDisabled] = useState(false)
+	const [openDialog, setOpenDialog] = useState(false)
   const [input, setInput] = useState({
 		nama: '',
 		alamat: '',
@@ -21,11 +22,6 @@ export default function Home() {
 		jenisKelamin: 'Laki-Laki',
 		keterangan: ''
   })
-
-	function handleOpen(){
-		onOpen()
-		console.log('cliccck')
-	}
 
   async function handleSubmit(e){
 		e.preventDefault()
@@ -49,9 +45,9 @@ export default function Home() {
 				jenisKelamin: '',
 				keterangan: ''
 			})
-			
 			setLoading(false)
 			setDisabled(false)
+			setOpenDialog(true)
 		})
 		.catch(err=> {
 			console.log(err)
@@ -67,7 +63,7 @@ export default function Home() {
   return (
 	<div className='flex h-full relative'>
 	{/* form */}
-		<div className='w-[0px] sm:w-[60%] mx-0 m-auto' onClick={handleOpen}>
+		<div className='w-[0px] sm:w-[60%] mx-0 m-auto'>
 			<Image 
 				className='mx-auto my-0' 
 				src={'/developer-team.svg'} 
@@ -126,15 +122,15 @@ export default function Home() {
 					></textarea>
 					<button 
 						disabled={disabled} 
-						className={`${disabled ? 'opacity-80' : 'opacity-100'} btn-grad`}>
-							{loading ? 'Loading...' : 'Submit'}
+						className={`${disabled ? 'opacity-80' : 'opacity-100'} btn-grad flex items-center`}>
+							{loading ? <Spinner size={'md'} /> : 'Submit'}
 					</button>
 				</form>
 			</div>
 		</div>
 
 
-		<Dialog/>
+		<Dialog openDialog={openDialog} setOpenDialog={setOpenDialog}/>
 	</div>
   )
 }
