@@ -8,22 +8,20 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  useDisclosure,
   Button,
 } from '@chakra-ui/react'
 
-export default function Dialog() {
-  const { isOpen, onClose } = useDisclosure()
+export default function Dialog({openDialog, setOpenDialog}) {
   const cancelRef = React.useRef()
 
   return (
     <div>
       <AlertDialog
-        isOpen={isOpen}
+        isOpen={openDialog}
         leastDestructiveRef={cancelRef}
-        onClose={onClose}
+        onClose={()=> setOpenDialog(false)}
       >
-        <AlertDialogOverlay>
+        <AlertDialogOverlay className='flex items-center'>
           <AlertDialogContent>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
               Delete Customer
@@ -34,7 +32,7 @@ export default function Dialog() {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
+              <Button ref={cancelRef} onClick={()=> setOpenDialog(false)}>
                 Cancel
               </Button>
             </AlertDialogFooter>
