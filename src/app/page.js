@@ -12,7 +12,7 @@ export default function Home() {
 
   const {onOpen} = useDisclosure()
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 	const [disabled, setDisabled] = useState(false)
 	const [openDialog, setOpenDialog] = useState(false)
   const [input, setInput] = useState({
@@ -61,7 +61,7 @@ export default function Home() {
 	}	
 
   return (
-	<div className='flex h-full relative'>
+	<div className='flex h-full relative gradient-bg'>
 	{/* form */}
 		<div className='w-[0px] sm:w-[60%] mx-0 m-auto'>
 			<Image 

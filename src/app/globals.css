@@ -8,6 +8,10 @@ html, body{
   width: 100%;
   height: 100%;
   font-family: var(inter);
+  
+}
+
+.gradient-bg{
   background-color:#99ffbb;
   background-image:
   radial-gradient(at 43% 6%, hsla(238,87%,62%,1) 0px, transparent 50%),
