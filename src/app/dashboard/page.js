@@ -1,30 +1,57 @@
+'use client'
 
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import React from 'react'
+import React, {use} from 'react'
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+} from '@chakra-ui/react'
 
+async function getTamu(){
+  const res = await fetch(`${getBaseUrl()}/api/get-tamu`)
+  return res.json()
+}
 
-export default async function page() {
+export default function page() {
 
-  async function getTamu(){
-    const res = await fetch(`${getBaseUrl()}/api/get-tamu`)
-    return res.json()
-  }
+  const data = use(getTamu())
 
-  const data = await getTamu()
-  console.log(data)
   return (
-    <div className='bg-white flex w-full h-full'>
-      <div className='w-[300px] h-full bg-slate-500'>
-        sidebar
-      </div>
-      <div className='w-full h-full'>
-        <div className='bg-blue-500 w-full h-[50px]'>
-          Header
-        </div>
-        <div className='p-5 bg-red-500 h-full'>
-          <h1>Dashboard</h1>
-        </div>
-      </div>
+    <div className='p-5'>
+      <h1 className='font-bold text-xl'>{new Date().toLocaleDateString()}</h1>
+      <TableContainer>
+        <Table variant='simple'>
+          <Thead>
+            <Tr>
+              <Th>No</Th>
+              <Th>Nama</Th>
+              <Th>Alamat</Th>
+              <Th>Hp</Th>
+              <Th>Jenis Kelamin</Th>
+              <Th>Jam Masuk</Th>
+              <Th>Kepuasan</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data.map((dt, i)=>(
+              <Tr key={i}>
+                <Td>{i + 1}</Td>
+                <Td>{dt.nama}</Td>
+                <Td>{dt.alamat}</Td>
+                <Td>{dt.hp}</Td>
+                <Td>{dt.jenisKelamin}</Td>
+                <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+                <Td>{dt.kepuasan}</Td>
+            </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }
