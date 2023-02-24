@@ -1,5 +1,4 @@
 'use client'
-
 import { getBaseUrl } from '@/utils/getBaseUrl'
 import React, {use} from 'react'
 import {
@@ -17,7 +16,7 @@ async function getTamu(){
   return res.json()
 }
 
-export default function page() {
+export default function Page() {
 
   const data = use(getTamu())
 
@@ -55,6 +54,3 @@ export default function page() {
     </div>
   )
 }
-
-
-
