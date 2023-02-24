@@ -1,6 +1,7 @@
 'use client'
+
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import React, {use} from 'react'
+import React from 'react'
 import {
   Table,
   Thead,
@@ -9,20 +10,22 @@ import {
   Th,
   Td,
   TableContainer,
+  Spinner,
 } from '@chakra-ui/react'
+import useSWR from 'swr'
 
-async function getTamu(){
-  const res = await fetch(`${getBaseUrl()}/api/get-tamu`)
-  return res.json()
-}
 
 export default function Page() {
 
-  const data = use(getTamu())
+  const fetcher = (...args) => fetch(...args).then(res => res.json())
+
+  const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu`, fetcher)
 
   return (
     <div className='p-5'>
       <h1 className='font-bold text-xl'>{new Date().toLocaleDateString()}</h1>
+      {isLoading && <Spinner/>}
+      {data !== undefined &&
       <TableContainer>
         <Table variant='simple'>
           <Thead>
@@ -37,7 +40,7 @@ export default function Page() {
             </Tr>
           </Thead>
           <Tbody>
-            {data.map((dt, i)=>(
+            {data?.map((dt, i)=>(
               <Tr key={i}>
                 <Td>{i + 1}</Td>
                 <Td>{dt.nama}</Td>
@@ -51,6 +54,7 @@ export default function Page() {
           </Tbody>
         </Table>
       </TableContainer>
+      }
     </div>
   )
 }
