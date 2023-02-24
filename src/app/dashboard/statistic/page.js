@@ -13,7 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 
-export default function page() {
+export default function Page() {
 
   let currentYer = new Date().getFullYear()
 
