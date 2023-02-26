@@ -1,7 +1,7 @@
 'use client'
 
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import React from 'react'
+import React, {useState} from 'react'
 import {
   Table,
   Thead,
@@ -11,21 +11,33 @@ import {
   Td,
   TableContainer,
   Spinner,
+  Input
 } from '@chakra-ui/react'
 import useSWR from 'swr'
+import useSWRMutation from 'swr/mutation'
 
 
 export default function Page() {
 
+  const [currentDate, setDate] = useState(new Date().toISOString().slice(0,10))
+
   const fetcher = (...args) => fetch(...args).then(res => res.json())
 
-  const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu`, fetcher)
+  const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${currentDate}`,fetcher)
 
   return (
     <div className='p-5'>
-      <h1 className='font-bold text-xl'>{new Date().toLocaleDateString()}</h1>
-      {isLoading && <Spinner/>}
-      {data !== undefined &&
+      <Input type='date' value={currentDate} onChange={(e)=> setDate(e.target.value)}/> 
+      {isLoading && 
+        <div className='w-full h-[400px] flex justify-center items-center'>
+          <Spinner/>
+        </div>
+      }
+      {!isLoading && !data ?
+        <div className='w-full h-full mt-5 flex justify-center items-center'>
+          <h1>No data</h1>
+        </div>
+      :
       <TableContainer>
         <Table variant='simple'>
           <Thead>
