@@ -2,9 +2,9 @@ import prisma from "@/server/db/client";
 
 export default async function handler(req, res) {
 
-  const date = req.body.date
+  const date = req.query.date
   
-  console.log('from server :' + date);
+  console.log('from server' + date);
 
   if (req.method === 'GET') {  
     try{
