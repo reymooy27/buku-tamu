@@ -3,6 +3,7 @@
 import './globals.css'
 import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
+import { SessionProvider } from "next-auth/react"
 
 export default function RootLayout({ children }) {
   return (
@@ -14,9 +15,11 @@ export default function RootLayout({ children }) {
         <head />
         
         <body>
-          <CacheProvider>
-            <ChakraProvider>{children}</ChakraProvider>
-          </CacheProvider>
+          <SessionProvider>
+            <CacheProvider>
+              <ChakraProvider>{children}</ChakraProvider>
+            </CacheProvider>
+          </SessionProvider>
         </body>
       </html>
   )

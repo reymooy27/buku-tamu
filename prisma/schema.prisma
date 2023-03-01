@@ -22,3 +22,23 @@ model Tamu {
   keterangan String?
   kepuasan String?
 }
+
+
+model Session {
+    id           Int      @id @default(autoincrement())
+    sessionToken String   @unique
+    userId       Int
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    @@index([userId])
+}
+
+model User {
+    id            Int       @id @default(autoincrement())
+    name          String?
+    email         String?   
+    image         String?
+    username    String
+    password    String
+    sessions      Session[]
+}
