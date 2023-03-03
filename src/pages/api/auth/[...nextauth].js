@@ -4,9 +4,9 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/server/db/client";
 
 export const authOptions = {
-  // pages: {
-  //   signIn: "/login",
-  // },
+  pages: {
+    signIn: "/signin",
+  },
   secret: 'sfsgergsregsreg',
   session: {
     strategy: "jwt",
