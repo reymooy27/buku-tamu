@@ -4,8 +4,6 @@ export default async function handler(req, res) {
 
   const date = req.query.date
   
-  console.log('from server' + date);
-
   if (req.method === 'GET') {  
     try{
       const tamu = await prisma.tamu.findMany({
