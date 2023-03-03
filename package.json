@@ -16,15 +16,14 @@
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next/font": "13.1.6",
     "@prisma/client": "^4.10.1",
-    "chart.js": "^4.2.1",
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
     "framer-motion": "^9.0.4",
     "next": "13.1.6",
     "next-auth": "^4.19.2",
     "react": "18.2.0",
-    "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
+    "recharts": "^2.4.3",
     "swr": "^2.0.4"
   },
   "devDependencies": {
