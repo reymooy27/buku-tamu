@@ -14,8 +14,38 @@ import {
   Input
 } from '@chakra-ui/react'
 import useSWR from 'swr'
-import useSWRMutation from 'swr/mutation'
+import { ResponsiveContainer, LineChart , XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
 
+const chartdata = [
+  {
+    "name": "Januari",
+    "uv": 4000,
+  },
+  {
+    "name": "Februari",
+    "uv": 3000,
+  },
+  {
+    "name": "Page C",
+    "uv": 2000,
+  },
+  {
+    "name": "Page D",
+    "uv": 2780,
+  },
+  {
+    "name": "Page E",
+    "uv": 1890,
+  },
+  {
+    "name": "Page F",
+    "uv": 2390,
+  },
+  {
+    "name": "Page G",
+    "uv": 3490,
+  }
+]
 
 export default function Page() {
 
@@ -25,48 +55,92 @@ export default function Page() {
 
   const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${currentDate}`,fetcher)
 
+  
+  const {data: allTamu} = useSWR(`${getBaseUrl()}/api/get-tamu`,fetcher)
+  const {data: tamuHariIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${new Date().toISOString().slice(0,10)}`,fetcher)
+  const {data: tamuBulanIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-month/${new Date().getUTCMonth()}`,fetcher)
+
   return (
-    <div className='p-5'>
-      <Input type='date' value={currentDate} onChange={(e)=> setDate(e.target.value)}/> 
-      {isLoading && 
-        <div className='w-full h-[400px] flex justify-center items-center'>
-          <Spinner/>
+    <div className='p-5 flex flex-col'>
+      <div className='mb-3'>
+        <h1 className='text-[28px] font-bold'>{new Date().toDateString()}</h1>
+      </div>
+      <div className='flex justify-evenly flex-col md:flex-row mb-5 gap-4'>
+        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
+          <h1 className='text-[28px] font-bold'>{tamuHariIni?.length}</h1>
+          <p>Tamu hari ini</p>
         </div>
-      }
-      {!isLoading && !data ?
-        <div className='w-full h-full mt-5 flex justify-center items-center'>
-          <h1>No data</h1>
+        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
+          <h1 className='text-[28px] font-bold'>{tamuBulanIni?.length}</h1>
+          <p>Tamu bulan ini</p>
         </div>
-      :
-      <TableContainer>
-        <Table variant='simple'>
-          <Thead>
-            <Tr>
-              <Th>No</Th>
-              <Th>Nama</Th>
-              <Th>Alamat</Th>
-              <Th>Hp</Th>
-              <Th>Jenis Kelamin</Th>
-              <Th>Jam Masuk</Th>
-              <Th>Kepuasan</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data?.map((dt, i)=>(
-              <Tr key={i}>
-                <Td>{i + 1}</Td>
-                <Td>{dt.nama}</Td>
-                <Td>{dt.alamat}</Td>
-                <Td>{dt.hp}</Td>
-                <Td>{dt.jenisKelamin}</Td>
-                <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
-                <Td>{dt.kepuasan}</Td>
-            </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      }
+        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
+          <h1 className='text-[28px] font-bold'>{data?.length}</h1>
+          <p>Tamu tahun ini</p>
+        </div>
+        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
+          <h1 className='text-[28px] font-bold'>{allTamu?.length}</h1>
+          <p>Total tamu</p>
+        </div>
+      </div>
+      <div className='w-full h-[200px] p-4 pb-8 mb-5 rounded-md bg-slate-200 shadow-md'>
+        <h1 className='text-xl font-bold mb-2'>Statistik</h1>
+        <ResponsiveContainer width='100%' height='100%'>
+          <LineChart width={500} height={200} data={chartdata}
+            margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <XAxis dataKey="name" axisLine={false} tickLine={false}/>
+            <YAxis axisLine={false} tickLine={false}/>
+            <Tooltip />
+            <Line type="monotone" dataKey="uv" stroke="#3b82f6" strokeWidth={3}/>
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      
+        <div className='p-3 rounded-md w-full shadow-md bg-slate-200'>
+          <div className='my-2 flex justify-between flex-col md:flex-row'>
+            <h1 className='text-xl font-bold mb-2'>Daftar Tamu</h1>
+            <Input className='w-full md:w-[200px] self-end bg-white' type='date' value={currentDate} onChange={(e)=> setDate(e.target.value)}/>
+          </div>
+          {isLoading && 
+            <div className='w-full h-[300px] flex justify-center items-center'>
+              <Spinner/>
+            </div>
+          }
+          {!isLoading && data?.length < 1 &&
+              <div className='w-full h-[300px] mt-5 flex justify-center items-center'>
+                <h1>Tidak ada tamu hari ini</h1>
+              </div>
+          }
+          {!isLoading && data?.length > 0 && 
+          <TableContainer>
+            <Table variant='simple'>
+              <Thead>
+                <Tr>
+                  <Th>No</Th>
+                  <Th>Nama</Th>
+                  <Th>Alamat</Th>
+                  <Th>Hp</Th>
+                  <Th>Jenis Kelamin</Th>
+                  <Th>Jam Masuk</Th>
+                  <Th>Kepuasan</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {data?.map((dt, i)=>(
+                  <Tr key={i}>
+                    <Td>{i + 1}</Td>
+                    <Td>{dt.nama}</Td>
+                    <Td>{dt.alamat}</Td>
+                    <Td>{dt.hp}</Td>
+                    <Td>{dt.jenisKelamin}</Td>
+                    <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+                    <Td>{dt.kepuasan}</Td>
+                </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>}
+        </div> 
     </div>
   )
 }
