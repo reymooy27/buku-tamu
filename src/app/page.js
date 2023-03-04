@@ -77,7 +77,7 @@ export default function Home() {
 			<div className='form w-full bg-white p-5 rounded-[10px]'>
 				<h1 className='text-[28px] mb-[20px] text-center'>Selamat Datang</h1>
 				<form onSubmit={handleSubmit} className='flex flex-col gap-3 w-full'>
-						<input 
+						<input className='p-[10px]' 
 							onChange={handleChange} 
 							value={input.nama} 
 							type="text" 
@@ -85,7 +85,7 @@ export default function Home() {
 							name='nama' 
 							required
 						/>
-						<input 
+						<input className='p-[10px]'
 							onChange={handleChange} 
 							value={input.alamat} 
 							type="text" 
@@ -94,7 +94,7 @@ export default function Home() {
 							required
 						/>
 
-					<input 
+					<input className='p-[10px]'
 						onChange={handleChange} 
 						value={input.hp} 
 						type="number" 
@@ -104,7 +104,7 @@ export default function Home() {
 						minLength={11}
 						required
 					/>
-					<select 
+					<select className='p-[10px]'
 						onChange={handleChange} 
 						name='jenisKelamin' 
 						value={input.jenisKelamin}
@@ -122,7 +122,7 @@ export default function Home() {
 					></textarea>
 					<button 
 						disabled={disabled} 
-						className={`${disabled ? 'opacity-80' : 'opacity-100'} btn-grad flex items-center`}>
+						className={`${disabled ? 'opacity-80' : 'opacity-100'} btn-grad flex items-center font-bold`}>
 							{loading ? <Spinner size={'md'} /> : 'Submit'}
 					</button>
 				</form>
