@@ -1,7 +1,7 @@
 'use client'
 
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import React, {useState} from 'react'
+import React, {Suspense, useState} from 'react'
 import {
   Table,
   Thead,
@@ -65,22 +65,24 @@ export default function Page() {
       <div className='mb-3'>
         <h1 className='text-[28px] font-bold'>{new Date().toDateString()}</h1>
       </div>
-      <div className='flex justify-evenly flex-col md:flex-row mb-5 gap-4'>
-        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
-          <h1 className='text-[28px] font-bold'>{tamuHariIni?.length}</h1>
-          <p>Tamu hari ini</p>
+      <div className='flex justify-evenly flex-row mb-5 gap-4'>
+        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <Suspense fallback={<Spinner size={'md'}/>}>
+            <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuHariIni?.length}</h1>
+            <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu hari ini</p>
+          </Suspense>
         </div>
-        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
-          <h1 className='text-[28px] font-bold'>{tamuBulanIni?.length}</h1>
-          <p>Tamu bulan ini</p>
+        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuBulanIni?.length}</h1>
+          <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu bulan ini</p>
         </div>
-        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
-          <h1 className='text-[28px] font-bold'>{data?.length}</h1>
-          <p>Tamu tahun ini</p>
+        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{data?.length}</h1>
+          <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu tahun ini</p>
         </div>
-        <div className='bg-slate-200 rounded-md shadow-md p-3 pl-5 h-[100px] w-full'>
-          <h1 className='text-[28px] font-bold'>{allTamu?.length}</h1>
-          <p>Total tamu</p>
+        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{allTamu?.length}</h1>
+          <p className='text-[12px] leading-[1.2] md:text-[16px]'>Total tamu</p>
         </div>
       </div>
       <div className='w-full h-[200px] p-4 pb-8 mb-5 rounded-md bg-slate-200 shadow-md'>
@@ -121,7 +123,9 @@ export default function Page() {
                   <Th>Alamat</Th>
                   <Th>Hp</Th>
                   <Th>Jenis Kelamin</Th>
+                  <Th>Instansi</Th>
                   <Th>Jam Masuk</Th>
+                  <Th>Keperluan</Th>
                   <Th>Kepuasan</Th>
                 </Tr>
               </Thead>
@@ -133,7 +137,9 @@ export default function Page() {
                     <Td>{dt.alamat}</Td>
                     <Td>{dt.hp}</Td>
                     <Td>{dt.jenisKelamin}</Td>
+                    <Td>{dt.asalInstansi}</Td>
                     <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+                    <Td>{dt.keperluan}</Td>
                     <Td>{dt.kepuasan}</Td>
                 </Tr>
                 ))}
