@@ -13,9 +13,9 @@ export const authOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    // async redirect({ url, baseUrl }) {
-    //   return `${baseUrl}/dashboard`;
-    // },
+    async redirect({ url, baseUrl }) {
+      return `${baseUrl}/dashboard`;
+    },
     async jwt({ token, user }) {
       const isSignIn = user ? true : false
       if (isSignIn) {
@@ -42,7 +42,7 @@ export const authOptions = {
         password: credentials.password,
       };
 
-      const user = await prisma.user.findFirst({
+      const user = await prisma?.user?.findFirst({
         where:{
           username: payload.username,
         }
