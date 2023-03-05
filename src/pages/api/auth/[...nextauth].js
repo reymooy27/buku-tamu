@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/server/db/client";
+import bcrypt from 'bcrypt'
 
 export const authOptions = {
   pages: {
@@ -12,9 +13,9 @@ export const authOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async redirect({ url, baseUrl }) {
-      return `${baseUrl}/dashboard`;
-    },
+    // async redirect({ url, baseUrl }) {
+    //   return `${baseUrl}/dashboard`;
+    // },
     async jwt({ token, user }) {
       const isSignIn = user ? true : false
       if (isSignIn) {
@@ -27,7 +28,7 @@ export const authOptions = {
       return { ...session, user: { username: token.username } }
     },
   },
-  // adapter: PrismaAdapter(prisma),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+  adapter: PrismaAdapter(prisma),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -48,7 +49,12 @@ export const authOptions = {
       })
       
       if(!user){
-        return null
+        throw new Error('Wrong credentials')
+      }
+
+      const checkPass = bcrypt.compare(payload.password, user.password)
+      if(!checkPass){
+        throw new Error('Wrong password')
       }
 
       return user
