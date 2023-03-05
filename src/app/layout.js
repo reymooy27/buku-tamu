@@ -5,7 +5,8 @@ import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
 import { SessionProvider } from "next-auth/react"
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, ...props }) {
+
   return (
       <html lang="en">
         {/*
@@ -15,7 +16,7 @@ export default function RootLayout({ children }) {
         <head />
         
         <body>
-          <SessionProvider>
+          <SessionProvider session={props.session}>
             <CacheProvider>
               <ChakraProvider>{children}</ChakraProvider>
             </CacheProvider>
