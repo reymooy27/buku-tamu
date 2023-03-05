@@ -2,15 +2,13 @@
 
 import Dialog from '@/components/Dialog'
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import { Spinner, useDisclosure } from '@chakra-ui/react'
+import { Spinner } from '@chakra-ui/react'
 import { Inter } from '@next/font/google'
 import Image from 'next/image'
 import { useState } from 'react'
 const inter = Inter({ subsets: ['latin'] , variable: 'inter'})
 
 export default function Home() {
-
-  const {onOpen} = useDisclosure()
 
   const [loading, setLoading] = useState(false)
 	const [disabled, setDisabled] = useState(false)
@@ -20,7 +18,8 @@ export default function Home() {
 		alamat: '',
 		hp: '',
 		jenisKelamin: 'Laki-Laki',
-		keterangan: ''
+		instansi: '',
+		keperluan: ''
   })
 
   async function handleSubmit(e){
@@ -43,7 +42,8 @@ export default function Home() {
 				alamat: '',
 				hp: '',
 				jenisKelamin: '',
-				keterangan: ''
+				keperluan: '',
+				instansi: ''
 			})
 			setLoading(false)
 			setDisabled(false)
@@ -74,9 +74,9 @@ export default function Home() {
 		</div>
 
 		<div className='flex justify-center items-center h-full w-full sm:w-[40%] p-3 sm:pr-[40px]'>
-			<div className='form w-full bg-white p-5 rounded-[10px]'>
+			<div className='form w-full flex flex-col items-center p-5 rounded-[10px] bg-[#ffffff80] backdrop-blur-[6px]'>
 				<h1 className='text-[28px] mb-[20px] text-center'>Selamat Datang</h1>
-				<form onSubmit={handleSubmit} className='flex flex-col gap-3 w-full'>
+				<form onSubmit={handleSubmit} className='flex flex-col gap-3 w-[95%]'>
 						<input className='p-[10px]' 
 							onChange={handleChange} 
 							value={input.nama} 
@@ -112,13 +112,20 @@ export default function Home() {
 						<option value="Laki-Laki">Laki-Laki</option>
 						<option value="Perempuan">Perempuan</option>
 					</select>
+					<input className='p-[10px]'
+						onChange={handleChange} 
+						value={input.instansi} 
+						type="text" 
+						placeholder='Kantor/Instansi' 
+						name='instansi' 
+					/>
 					<textarea 
-						onChange={handleChange} value={input.keterangan} 
-						name='keterangan' 
-						className='p-[10px] rounded-[10px] outline-none 
+						onChange={handleChange} value={input.keperluan} 
+						name='keperluan' 
+						className='p-[10px] rounded-[10px] outline-none opacity-[0.7]
 											border border-solid border-[#d6d4d4] hover:border-black 
 											transition-all ease-in-out duration-300 focus:border-black' 
-						placeholder='Keterangan'
+						placeholder='Keperluan'
 					></textarea>
 					<button 
 						disabled={disabled} 
