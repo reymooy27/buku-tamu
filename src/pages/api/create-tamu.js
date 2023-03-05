@@ -10,7 +10,8 @@ export default async function handler(req, res) {
           alamat: input.alamat,
           hp: input.hp,
           jenisKelamin: input.jenisKelamin,
-          keterangan: input.keterangan
+          asalInstansi: input.instansi,
+          keperluan: input.keperluan
         }
       })
       res.status(200).json('Berhasil')
