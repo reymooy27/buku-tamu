@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   
   const start = new Date(thisYear, month, 1).toISOString()
   const end = new Date(thisYear, month + 1, 0, 23, 59, 59, 999).toISOString()
-  console.log([start, end])
 
   if (req.method === 'GET') {  
     try{
