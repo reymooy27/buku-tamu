@@ -3,12 +3,13 @@
 import Dialog from '@/components/Dialog'
 import { getBaseUrl } from '@/utils/getBaseUrl'
 import { Spinner } from '@chakra-ui/react'
-import { Inter } from '@next/font/google'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-const inter = Inter({ subsets: ['latin'] , variable: 'inter'})
 
 export default function Home() {
+
+	const router = useRouter()
 
   const [loading, setLoading] = useState(false)
 	const [disabled, setDisabled] = useState(false)
@@ -17,7 +18,7 @@ export default function Home() {
 		nama: '',
 		alamat: '',
 		hp: '',
-		jenisKelamin: 'Laki-Laki',
+		jenisKelamin: '',
 		instansi: '',
 		keperluan: ''
   })
@@ -35,8 +36,8 @@ export default function Home() {
 			method: 'POST',
 			body: JSON.stringify(input),
 		})
-		.then(res=> {
-			console.log(res.json())
+		.then(async res=> {
+			const json = await res.json()
 			setInput({
 				nama: '',
 				alamat: '',
@@ -47,7 +48,7 @@ export default function Home() {
 			})
 			setLoading(false)
 			setDisabled(false)
-			setOpenDialog(true)
+			router.push(`/tamu/${json.session.id}`)
 		})
 		.catch(err=> {
 			console.log(err)
@@ -109,6 +110,7 @@ export default function Home() {
 						name='jenisKelamin' 
 						value={input.jenisKelamin}
 					>
+						<option value="">Jenis Kelamin</option>
 						<option value="Laki-Laki">Laki-Laki</option>
 						<option value="Perempuan">Perempuan</option>
 					</select>
