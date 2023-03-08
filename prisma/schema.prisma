@@ -23,6 +23,16 @@ model Tamu {
   jamKeluar DateTime?
   keterangan String?
   kepuasan String?
+  sessions TamuSession[]
+}
+
+model TamuSession {
+  id Int @id @default(autoincrement())
+  sessionToken String   @unique
+  tamuId Int
+  tamu Tamu @relation(fields: [tamuId], references: [id], onDelete: Cascade)
+  expires DateTime
+  @@index([tamuId])
 }
 
 
