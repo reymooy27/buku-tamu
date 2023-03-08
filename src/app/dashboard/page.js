@@ -16,37 +16,6 @@ import {
 import useSWR from 'swr'
 import { ResponsiveContainer, LineChart , XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
 
-const chartdata = [
-  {
-    "name": "Januari",
-    "uv": 4000,
-  },
-  {
-    "name": "Februari",
-    "uv": 3000,
-  },
-  {
-    "name": "Page C",
-    "uv": 2000,
-  },
-  {
-    "name": "Page D",
-    "uv": 2780,
-  },
-  {
-    "name": "Page E",
-    "uv": 1890,
-  },
-  {
-    "name": "Page F",
-    "uv": 2390,
-  },
-  {
-    "name": "Page G",
-    "uv": 3490,
-  }
-]
-
 export default function Page() {
 
   const [currentDate, setDate] = useState(new Date().toISOString().slice(0,10))
@@ -59,6 +28,7 @@ export default function Page() {
   const {data: allTamu} = useSWR(`${getBaseUrl()}/api/get-tamu`,fetcher)
   const {data: tamuHariIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${new Date().toISOString().slice(0,10)}`,fetcher)
   const {data: tamuBulanIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-month/${new Date().getUTCMonth()}`,fetcher)
+  const {data: monthlyCount} = useSWR(`${getBaseUrl()}/api/get-monthly-count`,fetcher)
 
   return (
     <div className='p-5 flex flex-col'>
@@ -88,12 +58,12 @@ export default function Page() {
       <div className='w-full h-[200px] p-4 pb-8 mb-5 rounded-md bg-slate-200 shadow-md'>
         <h1 className='text-xl font-bold mb-2'>Statistik</h1>
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart width={500} height={200} data={chartdata}
-            margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+          <LineChart width={500} height={200} data={monthlyCount}
+            margin={{ top: 5, right: -5, left: -20, bottom: 5 }}>
             <XAxis dataKey="name" axisLine={false} tickLine={false}/>
             <YAxis axisLine={false} tickLine={false}/>
             <Tooltip />
-            <Line type="monotone" dataKey="uv" stroke="#3b82f6" strokeWidth={3}/>
+            <Line type="monotone" dataKey="tamu" stroke="#3b82f6" strokeWidth={3}/>
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -140,7 +110,20 @@ export default function Page() {
                     <Td>{dt.asalInstansi}</Td>
                     <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
                     <Td>{dt.keperluan}</Td>
-                    <Td>{dt.kepuasan}</Td>
+                    <Td>
+                    {[...Array(5)].map((star, index) => {
+                      index += 1;
+                      return (
+                        <button
+                          type="button"
+                          key={index}
+                          className={index <= dt?.kepuasan ? "text-yellow-400" : "text-slate-500"}
+                        >
+                          <span className="star text-[28px]">&#9733;</span>
+                        </button>
+                      );
+                    })}
+                    </Td>
                 </Tr>
                 ))}
               </Tbody>
