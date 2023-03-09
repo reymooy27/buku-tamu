@@ -1,0 +1,28 @@
+import prisma from "@/server/db/client";
+
+export default async function handler(req, res) {
+
+  const thisYear = new Date().getFullYear()
+  
+  const start = new Date(thisYear, 0, 1).toISOString()
+  const end = new Date(thisYear + 1, 0 , 0, 23, 59, 59, 999).toISOString()
+
+  if (req.method === 'GET') {  
+    try{
+      const tamu = await prisma.tamu.count({
+        where:{
+          jamMasuk:{
+              gt: start,
+              lt: end,
+          },
+        },
+        
+      })
+      res.status(200).json(tamu)
+    }catch(err){
+      throw err
+    }
+  } else {
+    res.status(404).json('Not Found')
+  }
+}
