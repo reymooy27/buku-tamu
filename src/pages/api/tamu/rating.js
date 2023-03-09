@@ -3,6 +3,7 @@ import prisma from "@/server/db/client";
 export default async function handler(req, res) {
 
   const {tamuId, sessionId, rating} = JSON.parse(req.body)
+  const jamKeluar = new Date().toISOString()
 
   if (req.method === 'PATCH') {  
     try{
@@ -11,7 +12,8 @@ export default async function handler(req, res) {
           id: parseInt(tamuId,10)
         },
         data:{
-          kepuasan: String(rating)
+          kepuasan: String(rating),
+          jamKeluar
         }
       })
 
