@@ -22,7 +22,7 @@ export default function Dialog({openDialog, setOpenDialog}) {
         onClose={()=> setOpenDialog(false)}
       >
         <AlertDialogOverlay className='flex items-center'>
-          <AlertDialogContent>
+          <AlertDialogContent className='h-[400px] m-[20px] mt-[60px]'>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
               Delete Customer
             </AlertDialogHeader>
