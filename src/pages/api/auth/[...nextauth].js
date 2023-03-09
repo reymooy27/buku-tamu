@@ -41,18 +41,19 @@ export const authOptions = {
         username: credentials.username,
         password: credentials.password,
       };
-
+      
       const user = await prisma?.user?.findFirst({
         where:{
           username: payload.username,
         }
       })
-      
+
       if(!user){
         throw new Error('Wrong credentials')
       }
 
-      const checkPass = bcrypt.compare(payload.password, user.password)
+      const checkPass = await bcrypt.compare(payload.password, user.password)
+      
       if(!checkPass){
         throw new Error('Wrong password')
       }
