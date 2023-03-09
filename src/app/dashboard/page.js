@@ -11,49 +11,64 @@ import {
   Td,
   TableContainer,
   Spinner,
-  Input
+  Input,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react'
 import useSWR from 'swr'
 import { ResponsiveContainer, LineChart , XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
+import Link from 'next/link'
 
 export default function Page() {
 
   const [currentDate, setDate] = useState(new Date().toISOString().slice(0,10))
+  const [openDialog, setOpenDialog] = useState(false)
+  const [userID, setUserID] = useState(0)
 
   const fetcher = (...args) => fetch(...args).then(res => res.json())
 
   const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${currentDate}`,fetcher)
 
-  
-  const {data: allTamu} = useSWR(`${getBaseUrl()}/api/get-tamu`,fetcher)
-  const {data: tamuHariIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date/${new Date().toISOString().slice(0,10)}`,fetcher)
-  const {data: tamuBulanIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-month/${new Date().getUTCMonth()}`,fetcher)
+  const {data: allTamu} = useSWR(`${getBaseUrl()}/api/get-tamu-all-count`,fetcher)
+  const {data: tamuHariIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-date-count`,fetcher)
+  const {data: tamuBulanIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-month-count`,fetcher)
+  const {data: tamuTahunIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-year-count`,fetcher)
   const {data: monthlyCount} = useSWR(`${getBaseUrl()}/api/get-monthly-count`,fetcher)
 
+  function handleOpenDialog(id){
+    setUserID(id)
+    setOpenDialog(true)
+  }
+
   return (
-    <div className='p-5 flex flex-col'>
-      <div className='mb-3'>
+    <div className='p-5 flex flex-col w-full h-full'>
+      <div className='mb-3 w-full'>
         <h1 className='text-[28px] font-bold'>{new Date().toDateString()}</h1>
       </div>
-      <div className='flex justify-evenly flex-row mb-5 gap-4'>
+      <div className='w-full flex justify-evenly flex-row mb-5 gap-4'>
         <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
           <Suspense fallback={<Spinner size={'md'}/>}>
-            <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuHariIni?.length}</h1>
+            <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuHariIni}</h1>
             <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu hari ini</p>
           </Suspense>
         </div>
-        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
-          <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuBulanIni?.length}</h1>
+        <Link href='/dashboard/tamu/by-month' className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuBulanIni}</h1>
           <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu bulan ini</p>
-        </div>
-        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
-          <h1 className='tet-[20px] md:text-[28px] font-bold'>{data?.length}</h1>
+        </Link>
+        <Link href='/dashboard/tamu/by-year' className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{tamuTahunIni}</h1>
           <p className='text-[12px] leading-[1.2] md:text-[16px]'>Tamu tahun ini</p>
-        </div>
-        <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
-          <h1 className='tet-[20px] md:text-[28px] font-bold'>{allTamu?.length}</h1>
+        </Link>
+        <Link href='/dashboard/tamu/all' className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>        
+          <h1 className='tet-[20px] md:text-[28px] font-bold'>{allTamu}</h1>
           <p className='text-[12px] leading-[1.2] md:text-[16px]'>Total tamu</p>
-        </div>
+        </Link>
+
       </div>
       <div className='w-full h-[200px] p-4 pb-8 mb-5 rounded-md bg-slate-200 shadow-md'>
         <h1 className='text-xl font-bold mb-2'>Statistik</h1>
@@ -85,7 +100,7 @@ export default function Page() {
           }
           {!isLoading && data?.length > 0 && 
           <TableContainer>
-            <Table variant='simple'>
+            <Table variant='striped' colorScheme='gray'>
               <Thead>
                 <Tr>
                   <Th>No</Th>
@@ -94,9 +109,11 @@ export default function Page() {
                   <Th>Hp</Th>
                   <Th>Jenis Kelamin</Th>
                   <Th>Instansi</Th>
-                  <Th>Jam Masuk</Th>
+                  <Th>Jam Dilayani</Th>
+                  <Th>Jam Selesai Dilayani</Th>
                   <Th>Keperluan</Th>
                   <Th>Kepuasan</Th>
+                  <Th>Action</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -109,6 +126,7 @@ export default function Page() {
                     <Td>{dt.jenisKelamin}</Td>
                     <Td>{dt.asalInstansi}</Td>
                     <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+                    <Td>{dt.jamKeluar && new Date(dt.jamKeluar).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
                     <Td>{dt.keperluan}</Td>
                     <Td>
                     {[...Array(5)].map((star, index) => {
@@ -124,12 +142,70 @@ export default function Page() {
                       );
                     })}
                     </Td>
+                    <Td>
+                      <button className='p-3 rounded-md bg-red-400' onClick={()=> handleOpenDialog(dt.id)}>Hapus</button>
+                    </Td>
                 </Tr>
                 ))}
               </Tbody>
             </Table>
           </TableContainer>}
         </div> 
+
+        <Dialog openDialog={openDialog} userID={userID} setOpenDialog={setOpenDialog}/>
+    </div>
+  )
+}
+
+
+
+export function Dialog({openDialog, setOpenDialog, userID}) {
+  const cancelRef = React.useRef()
+  const [isLoading, setIsLoading] = useState(false)
+
+  async function deleteTamu(id){
+    setIsLoading(true)
+    await fetch(`${getBaseUrl()}/api/deleteTamu`, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        id: userID
+      })
+    })
+    .then(async res=> {
+      setIsLoading(false)
+    })
+    .catch(err=> setIsLoading(false))
+    setOpenDialog(false)
+  }
+
+  return (
+    <div>
+      <AlertDialog
+        isOpen={openDialog}
+        leastDestructiveRef={cancelRef}
+        onClose={()=> setOpenDialog(false)}
+      >
+        <AlertDialogOverlay className='flex items-center'>
+          <AlertDialogContent className='m-[20px] mt-[60px]'>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Hapus Tamu
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Anda yakin ingin menghapus
+            </AlertDialogBody>
+
+            <AlertDialogFooter flex gap={3}>
+              <button className='bg-red-400 p-4 rounded-md hover:opacity-[0.7]' onClick={()=> deleteTamu(userID)}>
+              {isLoading ? <div><Spinner size={'md'} /></div> : 'Hapus'}
+              </button>
+              <button className='bg-slate-400 p-4 rounded-md hover:opacity-[0.7]' ref={cancelRef} onClick={()=> setOpenDialog(false)}>
+                Cancel
+              </button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </div>
   )
 }
