@@ -14,6 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
 	const [disabled, setDisabled] = useState(false)
 	const [openDialog, setOpenDialog] = useState(false)
+	const [errorMessage, setErrorMessage] = useState(null)
   const [input, setInput] = useState({
 		nama: '',
 		alamat: '',
@@ -37,21 +38,17 @@ export default function Home() {
 			body: JSON.stringify(input),
 		})
 		.then(async res=> {
+			if(!res.ok){
+				setLoading(false)
+				setDisabled(false)
+				setErrorMessage('Error')
+			}
 			const json = await res.json()
-			setInput({
-				nama: '',
-				alamat: '',
-				hp: '',
-				jenisKelamin: '',
-				keperluan: '',
-				instansi: ''
-			})
-			setLoading(false)
-			setDisabled(false)
 			router.push(`/tamu/${json.session.id}`)
 		})
 		.catch(err=> {
 			console.log(err)
+			setErrorMessage(JSON.stringify(err))
 			setLoading(false)
 			setDisabled(false)
 		})
@@ -78,6 +75,7 @@ export default function Home() {
 			<div className='form w-full flex flex-col items-center p-5 rounded-[10px] bg-[#ffffff80] backdrop-blur-[6px]'>
 				<h1 className='text-[28px] mb-[20px] text-center'>Selamat Datang</h1>
 				<form onSubmit={handleSubmit} className='flex flex-col gap-3 w-[95%]'>
+					{errorMessage && <p className='text-red-500 text-center'>{errorMessage}</p>}
 						<input className='p-[10px]' 
 							onChange={handleChange} 
 							value={input.nama} 
