@@ -124,8 +124,6 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
     status: tamuData?.status,
     keterangan: tamuData?.keterangan
   })
-  console.log(tamuData)
-  console.log(input)
 
   function handleChange(e) {
 		setInput({...input, [e.target.name]: e.target.value})
