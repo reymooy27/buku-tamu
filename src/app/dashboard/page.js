@@ -27,7 +27,8 @@ export default function Page() {
 
   const [currentDate, setDate] = useState(new Date().toISOString().slice(0,10))
   const [openDialog, setOpenDialog] = useState(false)
-  const [userID, setUserID] = useState(0)
+  const [dialogType, setDialogType] = useState('')
+  const [tamuData, setTamuData] = useState(0)
 
   const fetcher = (...args) => fetch(...args).then(res => res.json())
 
@@ -39,15 +40,16 @@ export default function Page() {
   const {data: tamuTahunIni} = useSWR(`${getBaseUrl()}/api/get-tamu-by-year-count`,fetcher)
   const {data: monthlyCount} = useSWR(`${getBaseUrl()}/api/get-monthly-count`,fetcher)
 
-  function handleOpenDialog(id){
-    setUserID(id)
+  function handleOpenDialog(data, type){
+    setTamuData(data)
     setOpenDialog(true)
+    setDialogType(type)
   }
 
   return (
     <div className='p-5 flex flex-col w-full h-full'>
       <div className='mb-3 w-full'>
-        <h1 className='text-[28px] font-bold'>{new Date().toDateString()}</h1>
+        <h1 className='text-[28px] font-bold'>{new Date().toLocaleDateString('id',{ weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h1>
       </div>
       <div className='w-full flex justify-evenly flex-row mb-5 gap-4'>
         <div className='flex flex-col justify-center bg-slate-200 rounded-md shadow-md p-3 md:pl-5 h-[100px] w-full text-center md:text-left'>
@@ -99,76 +101,38 @@ export default function Page() {
               </div>
           }
           {!isLoading && data?.length > 0 && 
-          <TableContainer>
-            <Table variant='striped' colorScheme='gray'>
-              <Thead>
-                <Tr>
-                  <Th>No</Th>
-                  <Th>Nama</Th>
-                  <Th>Alamat</Th>
-                  <Th>Hp</Th>
-                  <Th>Jenis Kelamin</Th>
-                  <Th>Instansi</Th>
-                  <Th>Jam Dilayani</Th>
-                  <Th>Jam Selesai Dilayani</Th>
-                  <Th>Keperluan</Th>
-                  <Th>Kepuasan</Th>
-                  <Th>Action</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {data?.map((dt, i)=>(
-                  <Tr key={i}>
-                    <Td>{i + 1}</Td>
-                    <Td>{dt.nama}</Td>
-                    <Td>{dt.alamat}</Td>
-                    <Td>{dt.hp}</Td>
-                    <Td>{dt.jenisKelamin}</Td>
-                    <Td>{dt.asalInstansi}</Td>
-                    <Td>{new Date(dt.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
-                    <Td>{dt.jamKeluar && new Date(dt.jamKeluar).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
-                    <Td>{dt.keperluan}</Td>
-                    <Td>
-                    {[...Array(5)].map((star, index) => {
-                      index += 1;
-                      return (
-                        <button
-                          type="button"
-                          key={index}
-                          className={index <= dt?.kepuasan ? "text-yellow-400" : "text-slate-500"}
-                        >
-                          <span className="star text-[28px]">&#9733;</span>
-                        </button>
-                      );
-                    })}
-                    </Td>
-                    <Td>
-                      <button className='p-3 rounded-md bg-red-400' onClick={()=> handleOpenDialog(dt.id)}>Hapus</button>
-                    </Td>
-                </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>}
+            <TabelTamu data={data} handleOpenDialog={handleOpenDialog}/>
+          }
         </div> 
 
-        <Dialog openDialog={openDialog} userID={userID} setOpenDialog={setOpenDialog}/>
+        <Dialog openDialog={openDialog} dialogType={dialogType} tamuData={tamuData} setOpenDialog={setOpenDialog}/>
     </div>
   )
 }
 
-
-
-export function Dialog({openDialog, setOpenDialog, userID}) {
+export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
   const cancelRef = React.useRef()
   const [isLoading, setIsLoading] = useState(false)
+  const [input, setInput] = useState({
+		nama: tamuData?.nama,
+		alamat: tamuData?.alamat,
+		hp: tamuData?.hp,
+		jenisKelamin: tamuData?.jenisKelamin,
+		instansi: tamuData?.asalInstansi,
+		orangYgDitemui: tamuData?.orangYgDitemui,
+		keperluan: tamuData?.keperluan
+  })
 
-  async function deleteTamu(id){
+  function handleChange(e) {
+		setInput({...input, [e.target.name]: e.target.value})
+	}	
+
+  async function deleteTamu(){
     setIsLoading(true)
     await fetch(`${getBaseUrl()}/api/deleteTamu`, {
       method: 'DELETE',
       body: JSON.stringify({
-        id: userID
+        id: tamuData?.id
       })
     })
     .then(async res=> {
@@ -177,6 +141,116 @@ export function Dialog({openDialog, setOpenDialog, userID}) {
     .catch(err=> setIsLoading(false))
     setOpenDialog(false)
   }
+  
+  async function editTamu(){
+    console.log(input)
+  }
+
+  const EditTamu = (
+    <AlertDialogContent className='m-[20px] mt-[60px]'>
+      <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+        Edit Tamu
+      </AlertDialogHeader>
+
+      <AlertDialogBody>
+        <div className='flex flex-col gap-3 w-full'>
+          <label>Nama</label>
+          <input className='p-[10px] w-full' 
+            onChange={handleChange} 
+            value={tamuData?.nama} 
+            type="text" 
+            placeholder='Nama' 
+            name='nama' 
+            required
+          />
+          <label>Alamat</label>
+          <input className='p-[10px] w-full'
+            onChange={handleChange} 
+            value={tamuData?.alamat} 
+            type="text" 
+            placeholder='Alamat' 
+            name='alamat'
+            required
+          />
+          <label>No. Hp</label>
+          <input className='p-[10px] w-full'
+            onChange={handleChange} 
+            value={tamuData?.hp} 
+            type="number" 
+            placeholder='No.Hp' 
+            name='hp' 
+            min={0}
+            minLength={11}
+            required
+          />
+          <label>Jenis Kelamin</label>
+          <select className='p-[10px] w-full'
+            onChange={handleChange} 
+            name='jenisKelamin' 
+            value={tamuData?.jenisKelamin}
+          >
+            <option value="">Jenis Kelamin</option>
+            <option value="Laki-Laki">Laki-Laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+          <label>Asal Instansi</label>
+          <input className='p-[10px] w-full'
+            onChange={handleChange} 
+            value={tamuData?.instansi} 
+            type="text" 
+            placeholder='Kantor/Instansi' 
+            name='instansi' 
+            required
+          />
+          <label>Orang Yang Ditemui</label>
+          <input className='p-[10px] w-full'
+            onChange={handleChange} 
+            value={tamuData?.orangYgDitemui} 
+            type="text" 
+            placeholder='Orang Yang Ditemui' 
+            name='orangYgDitemui' 
+          />
+          <label>Keperluan</label>
+          <textarea 
+						onChange={handleChange} value={tamuData?.keperluan} 
+						name='keperluan' 
+						className='p-[10px] w-full rounded-[10px] outline-none opacity-[0.7]
+											border border-solid border-[#d6d4d4] hover:border-black 
+											transition-all ease-in-out duration-300 focus:border-black' 
+						placeholder='Keperluan'
+					></textarea>
+          <label>Status</label>
+          <select className='p-[10px] w-full'
+            onChange={handleChange} 
+            name='status' 
+            value={tamuData?.status}
+          >
+            <option value="">Pending</option>
+            <option value="Laki-Laki">Dilayani</option>
+            <option value="Perempuan">Sudah Dilayani</option>
+          </select>
+          <label>Keterangan</label>
+          <textarea 
+						onChange={handleChange} value={tamuData?.keterangan} 
+						name='keterangan' 
+						className='p-[10px] w-full rounded-[10px] outline-none opacity-[0.7]
+											border border-solid border-[#d6d4d4] hover:border-black 
+											transition-all ease-in-out duration-300 focus:border-black' 
+						placeholder='Keterangan'
+					></textarea>
+        </div>
+      </AlertDialogBody>
+
+      <AlertDialogFooter flex gap={3}>
+        <button className='bg-orange-400 p-4 rounded-md hover:opacity-[0.7]' onClick={()=> editTamu()}>
+        {isLoading ? <div><Spinner size={'md'} /></div> : 'Edit'}
+        </button>
+        <button className='bg-slate-400 p-4 rounded-md hover:opacity-[0.7]' ref={cancelRef} onClick={()=> setOpenDialog(false)}>
+          Cancel
+        </button>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+)
 
   return (
     <div>
@@ -186,7 +260,7 @@ export function Dialog({openDialog, setOpenDialog, userID}) {
         onClose={()=> setOpenDialog(false)}
       >
         <AlertDialogOverlay className='flex items-center'>
-          <AlertDialogContent className='m-[20px] mt-[60px]'>
+          {dialogType === 'delete' ? <AlertDialogContent className='m-[20px] mt-[60px]'>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
               Hapus Tamu
             </AlertDialogHeader>
@@ -196,16 +270,82 @@ export function Dialog({openDialog, setOpenDialog, userID}) {
             </AlertDialogBody>
 
             <AlertDialogFooter flex gap={3}>
-              <button className='bg-red-400 p-4 rounded-md hover:opacity-[0.7]' onClick={()=> deleteTamu(userID)}>
+              <button className='bg-red-400 p-4 rounded-md hover:opacity-[0.7]' onClick={()=> deleteTamu()}>
               {isLoading ? <div><Spinner size={'md'} /></div> : 'Hapus'}
               </button>
               <button className='bg-slate-400 p-4 rounded-md hover:opacity-[0.7]' ref={cancelRef} onClick={()=> setOpenDialog(false)}>
                 Cancel
               </button>
             </AlertDialogFooter>
-          </AlertDialogContent>
+          </AlertDialogContent> : EditTamu}
         </AlertDialogOverlay>
       </AlertDialog>
     </div>
+  )
+}
+
+export function TabelTamu({data, handleOpenDialog}) {
+  return (
+    <TableContainer>
+      <Table variant='striped' colorScheme='gray'>
+        <Thead>
+          <Tr>
+            <Th>No</Th>
+            <Th>Nama</Th>
+            <Th>Alamat</Th>
+            <Th>Hp</Th>
+            <Th>Jenis Kelamin</Th>
+            <Th>Instansi</Th>
+            <Th>Keperluan</Th>
+            <Th>Orang Yang Ditemui</Th>
+            <Th>Jam Dilayani</Th>
+            <Th>Jam Selesai Dilayani</Th>
+            <Th>Status</Th>
+            <Th>Keterangan</Th>
+            <Th>Kepuasan</Th>
+            <Th>Action</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data?.map((dt, i)=>(
+            <Tr key={i}>
+              <Td>{i + 1}</Td>
+              <Td>{dt?.nama}</Td>
+              <Td>{dt?.alamat}</Td>
+              <Td>{dt?.hp}</Td>
+              <Td>{dt?.jenisKelamin}</Td>
+              <Td>{dt?.asalInstansi}</Td>
+              <Td>{dt?.keperluan}</Td>
+              <Td>{dt?.orangYgDitemui}</Td>
+              <Td>{new Date(dt?.jamMasuk).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+              <Td>{dt?.jamKeluar && new Date(dt?.jamKeluar).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false })}</Td>
+              <Td>
+                {dt.status === 'Dilayani' && <span className='p-3 rounded-[50px] bg-orange-300'>Dilayani</span>}
+                {dt.status === 'Selesai Dilayani' && <span className='p-3 rounded-[50px] bg-green-300'>Selesai Dilayani</span>}
+                {dt.status === 'Pending' && <span className='p-3 rounded-[50px] bg-red-300'>Pending</span>}
+              </Td>
+              <Td>{dt?.keterangan}</Td>
+              <Td>
+              {[...Array(5)].map((star, index) => {
+                index += 1;
+                return (
+                  <span
+                    key={index}
+                    className={index <= dt?.kepuasan ? "text-yellow-400" : "text-slate-500"}
+                  >
+                    <span className="star text-[28px]">&#9733;</span>
+                  </span>
+                );
+              })}
+              </Td>
+              <Td className='flex gap-3'>
+                <button className='p-3 rounded-md bg-orange-400 hover:opacity-[0.7]' onClick={()=> handleOpenDialog(dt, 'edit')}>Edit</button>
+                <button className='p-3 rounded-md bg-red-400 hover:opacity-[0.7]' onClick={()=> handleOpenDialog(dt, 'delete')}>Hapus</button>
+              </Td>
+          </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
   )
 }
