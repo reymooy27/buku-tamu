@@ -20,7 +20,7 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react'
 import useSWR from 'swr'
-import { ResponsiveContainer, LineChart , XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
+import { ResponsiveContainer, LineChart , XAxis, YAxis, Tooltip, Line} from 'recharts'
 import Link from 'next/link'
 
 export default function Page() {
@@ -118,10 +118,14 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
 		alamat: tamuData?.alamat,
 		hp: tamuData?.hp,
 		jenisKelamin: tamuData?.jenisKelamin,
-		instansi: tamuData?.asalInstansi,
+		asalInstansi: tamuData?.asalInstansi,
 		orangYgDitemui: tamuData?.orangYgDitemui,
-		keperluan: tamuData?.keperluan
+		keperluan: tamuData?.keperluan,
+    status: tamuData?.status,
+    keterangan: tamuData?.keterangan
   })
+  console.log(tamuData)
+  console.log(input)
 
   function handleChange(e) {
 		setInput({...input, [e.target.name]: e.target.value})
@@ -143,7 +147,19 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
   }
   
   async function editTamu(){
-    console.log(input)
+    setIsLoading(true)
+    await fetch(`${getBaseUrl()}/api/tamu/edit`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        id:tamuData?.id,
+        input: input
+      })
+    })
+    .then(async res=> {
+      setIsLoading(false)
+    })
+    .catch(err=> setIsLoading(false))
+    setOpenDialog(false)
   }
 
   const EditTamu = (
@@ -157,7 +173,7 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <label>Nama</label>
           <input className='p-[10px] w-full' 
             onChange={handleChange} 
-            value={tamuData?.nama} 
+            value={input?.nama} 
             type="text" 
             placeholder='Nama' 
             name='nama' 
@@ -166,7 +182,7 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <label>Alamat</label>
           <input className='p-[10px] w-full'
             onChange={handleChange} 
-            value={tamuData?.alamat} 
+            value={input?.alamat} 
             type="text" 
             placeholder='Alamat' 
             name='alamat'
@@ -175,7 +191,7 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <label>No. Hp</label>
           <input className='p-[10px] w-full'
             onChange={handleChange} 
-            value={tamuData?.hp} 
+            value={input?.hp} 
             type="number" 
             placeholder='No.Hp' 
             name='hp' 
@@ -187,7 +203,7 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <select className='p-[10px] w-full'
             onChange={handleChange} 
             name='jenisKelamin' 
-            value={tamuData?.jenisKelamin}
+            value={input?.jenisKelamin}
           >
             <option value="">Jenis Kelamin</option>
             <option value="Laki-Laki">Laki-Laki</option>
@@ -196,23 +212,23 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <label>Asal Instansi</label>
           <input className='p-[10px] w-full'
             onChange={handleChange} 
-            value={tamuData?.instansi} 
+            value={input?.asalInstansi} 
             type="text" 
             placeholder='Kantor/Instansi' 
-            name='instansi' 
+            name='asalInstansi' 
             required
           />
           <label>Orang Yang Ditemui</label>
           <input className='p-[10px] w-full'
             onChange={handleChange} 
-            value={tamuData?.orangYgDitemui} 
+            value={input?.orangYgDitemui} 
             type="text" 
             placeholder='Orang Yang Ditemui' 
             name='orangYgDitemui' 
           />
           <label>Keperluan</label>
           <textarea 
-						onChange={handleChange} value={tamuData?.keperluan} 
+						onChange={handleChange} value={input?.keperluan} 
 						name='keperluan' 
 						className='p-[10px] w-full rounded-[10px] outline-none opacity-[0.7]
 											border border-solid border-[#d6d4d4] hover:border-black 
@@ -223,15 +239,15 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
           <select className='p-[10px] w-full'
             onChange={handleChange} 
             name='status' 
-            value={tamuData?.status}
+            value={input?.status}
           >
-            <option value="">Pending</option>
-            <option value="Laki-Laki">Dilayani</option>
-            <option value="Perempuan">Sudah Dilayani</option>
+            <option value="Pending">Pending</option>
+            <option value="Dilayani">Dilayani</option>
+            <option value="Selesai Dilayani">Selesai Dilayani</option>
           </select>
           <label>Keterangan</label>
           <textarea 
-						onChange={handleChange} value={tamuData?.keterangan} 
+						onChange={handleChange} value={input?.keterangan} 
 						name='keterangan' 
 						className='p-[10px] w-full rounded-[10px] outline-none opacity-[0.7]
 											border border-solid border-[#d6d4d4] hover:border-black 
