@@ -21,6 +21,7 @@ export default function Home() {
 		hp: '',
 		jenisKelamin: '',
 		instansi: '',
+    orangYgDitemui: '',
 		keperluan: ''
   })
 
@@ -58,26 +59,41 @@ export default function Home() {
 		setInput({...input, [e.target.name]: e.target.value})
 	}	
 
+  function preventNumber(e){
+    const input = e.target
+    const value = input.value
+    const newValue = value.replace(/[0-9]/g, '')
+    input.value = newValue
+  }
+
   return (
-	<div className='flex h-full relative gradient-bg'>
+	<div className='flex flex-col lg:flex-row overflow-auto h-full gradient-bg'>
 	{/* form */}
-		<div className='w-[0px] sm:w-[60%] mx-0 m-auto'>
+		<div className='w-full lg:w-[60%] lg:mx-0 lg:m-auto mt-[20px]'>
 			<Image 
-				className='mx-auto my-0' 
-				src={'/developer-team.svg'} 
-				width={500} 
-				height={500} 
+				className='mx-auto my-0 w-[80px] lg:w-[300px]' 
+				src={'/logo-kota-kupang.png'} 
+				width={300} 
+				height={300} 
+				alt='ilustration-developer-svg'
+			/>
+			<Image 
+				className='mx-auto my-0 w-[200px] lg:w-[300px]' 
+				src={'/logo-diskominfo.png'} 
+				width={300} 
+				height={300} 
 				alt='ilustration-developer-svg'
 			/>
 		</div>
 
-		<div className='flex justify-center items-center h-full w-full sm:w-[40%] p-3 sm:pr-[40px]'>
-			<div className='form w-full flex flex-col items-center p-5 rounded-[10px] bg-[#ffffff80] backdrop-blur-[6px]'>
+		<div className='flex justify-center items-center w-full lg:w-[40%] p-3 lg:pr-[40px]'>
+			<div className='form w-full max-w-[500px] flex flex-col items-center p-5 rounded-[10px] bg-[#ffffff80] backdrop-blur-[6px]'>
 				<h1 className='text-[28px] mb-[20px] text-center'>Selamat Datang</h1>
 				<form onSubmit={handleSubmit} className='flex flex-col gap-3 w-[95%]'>
 					{errorMessage && <p className='text-red-500 text-center'>{errorMessage}</p>}
 						<input className='p-[10px]' 
 							onChange={handleChange} 
+              onInput={preventNumber}
 							value={input.nama} 
 							type="text" 
 							placeholder='Nama' 
@@ -118,6 +134,14 @@ export default function Home() {
 						type="text" 
 						placeholder='Kantor/Instansi' 
 						name='instansi' 
+					/>
+					<input className='p-[10px]'
+						onChange={handleChange} 
+            onInput={preventNumber}
+						value={input.orangYgDitemui} 
+						type="text" 
+						placeholder='Orang Yang Ditemui' 
+						name='orangYgDitemui' 
 					/>
 					<textarea 
 						onChange={handleChange} value={input.keperluan} 
