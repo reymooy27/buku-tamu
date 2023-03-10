@@ -12,7 +12,9 @@ export default async function handler(req, res) {
           hp: input.hp,
           jenisKelamin: input.jenisKelamin,
           asalInstansi: input.instansi,
-          keperluan: input.keperluan
+          orangYgDitemui: input.orangYgDitemui,
+          keperluan: input.keperluan,
+          status: 'Dilayani'
         }
       })
 
