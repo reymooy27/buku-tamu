@@ -70,7 +70,7 @@ export default function Page() {
         }
         {!isLoading && data?.length < 1 &&
             <div className='w-full h-[300px] mt-5 flex justify-center items-center'>
-              <h1>Tidak ada tamu hari ini</h1>
+              <h1>Tidak ada tamu bulan ini</h1>
             </div>
         }
         {!isLoading && data?.length > 0 && 
