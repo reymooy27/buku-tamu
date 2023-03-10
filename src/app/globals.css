@@ -24,6 +24,10 @@ html, body{
   radial-gradient(at 27% 46%, hsla(276,62%,77%,1) 0px, transparent 50%);
 }
 
+label{
+  margin-bottom: -10px;
+}
+
 input, select{
   height:50px;
   border-radius: 10px;
