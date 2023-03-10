@@ -21,6 +21,8 @@ model Tamu {
   jenisKelamin String?
   jamMasuk DateTime @default(now())
   jamKeluar DateTime?
+  orangYgDitemui String?
+  status String?
   keterangan String?
   kepuasan String?
   sessions TamuSession[]
