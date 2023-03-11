@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import { utils, writeFileXLSX } from 'xlsx';
 import Image from 'next/image'
 import TabelTamu from '@/components/TabelTamu'
+import DialogTamu from '@/components/DialogTamu'
 
 
 export default function Page() {
@@ -21,7 +22,7 @@ export default function Page() {
     setOpenDialog(true)
     setDialogType(type)
   }
-  
+
   const exportFile = useCallback(() => {
     const ws = utils.json_to_sheet(data);
     const wb = utils.book_new();
