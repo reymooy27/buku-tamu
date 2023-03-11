@@ -1,6 +1,6 @@
 'use client'
 
-import Dialog from '@/components/Dialog'
+import Dialog from '@/components/DialogTamu'
 import { getBaseUrl } from '@/utils/getBaseUrl'
 import { Spinner } from '@chakra-ui/react'
 import Image from 'next/image'
