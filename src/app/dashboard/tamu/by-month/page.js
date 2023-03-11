@@ -1,19 +1,12 @@
 'use client'
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import { 
-  Spinner,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,} from '@chakra-ui/react'
+import { Spinner} from '@chakra-ui/react'
 import React, { useCallback, useState } from 'react'
 import useSWR from 'swr'
-import { Dialog } from '../../page'
 import { utils, writeFileXLSX } from 'xlsx';
 import Image from 'next/image'
+import TabelTamu from '@/components/TabelTamu'
+import DialogTamu from '@/components/DialogTamu'
 
 
 export default function Page() {
@@ -22,11 +15,13 @@ export default function Page() {
   const [currentMonth, setMonth] = useState(new Date().getMonth())
   const [openDialog, setOpenDialog] = useState(false)
   const {isLoading, error, data} = useSWR(`${getBaseUrl()}/api/get-tamu-by-month/${currentMonth}`,fetcher)
-  const [userID, setUserID] = useState(0)
+  const [dialogType, setDialogType] = useState('')
+  const [tamuData, setTamuData] = useState(0)
 
-  function handleOpenDialog(id){
-    setUserID(id)
+  function handleOpenDialog(data, type){
+    setTamuData(data)
     setOpenDialog(true)
+    setDialogType(type)
   }
 
   const exportFile = useCallback(() => {
@@ -46,7 +41,7 @@ export default function Page() {
               <Image src='/file-text.svg' width={24} height={24} alt='icon-file'/>
               <span>Download</span>
             </button>
-            <select className='md:w-[200px] self-end bg-white' type='date' value={currentMonth} onChange={(e)=> setMonth(e.target.value)}>
+            <select className='w-[60px] md:w-[200px] self-end bg-white' type='date' value={currentMonth} onChange={(e)=> setMonth(e.target.value)}>
               <option value={0}>Januari</option>
               <option value={1}>Februari</option>
               <option value={2}>Maret</option>
@@ -74,59 +69,12 @@ export default function Page() {
             </div>
         }
         {!isLoading && data?.length > 0 && 
-        <TableContainer>
-          <Table variant='striped' colorScheme='gray'>
-            <Thead>
-              <Tr>
-                <Th>No</Th>
-                <Th>Nama</Th>
-                <Th>Alamat</Th>
-                <Th>Hp</Th>
-                <Th>Jenis Kelamin</Th>
-                <Th>Instansi</Th>
-                <Th>Tanggal</Th>
-                <Th>Keperluan</Th>
-                <Th>Kepuasan</Th>
-                <Th>Action</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data?.map((dt, i)=>(
-                <Tr key={i}>
-                  <Td>{i + 1}</Td>
-                  <Td>{dt.nama}</Td>
-                  <Td>{dt.alamat}</Td>
-                  <Td>{dt.hp}</Td>
-                  <Td>{dt.jenisKelamin}</Td>
-                  <Td>{dt.asalInstansi}</Td>
-                  <Td>{new Date(dt.jamMasuk).toLocaleDateString()}</Td>
-                  <Td>{dt.keperluan}</Td>
-                  <Td>
-                  {[...Array(5)].map((star, index) => {
-                    index += 1;
-                    return (
-                      <button
-                        type="button"
-                        key={index}
-                        className={index <= dt?.kepuasan ? "text-yellow-400" : "text-slate-500"}
-                      >
-                        <span className="star text-[28px]">&#9733;</span>
-                      </button>
-                    );
-                  })}
-                  </Td>
-                  <Td>
-                    <button className='p-3 rounded-md bg-red-400' onClick={()=> handleOpenDialog(dt.id)}>Hapus</button>
-                  </Td>
-              </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>}
-                  
-        <Dialog openDialog={openDialog} userID={userID} setOpenDialog={setOpenDialog}/>
-
+          <TabelTamu data={data} handleOpenDialog={handleOpenDialog}/>
+        }
       </div> 
+
+      <DialogTamu openDialog={openDialog} dialogType={dialogType} tamuData={tamuData} setOpenDialog={setOpenDialog}/>
+
     </div>
   )
 }
