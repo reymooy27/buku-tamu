@@ -1,7 +1,7 @@
 'use client'
 
 import { getBaseUrl } from '@/utils/getBaseUrl'
-import React, {Suspense, useState} from 'react'
+import React, {Suspense, useEffect, useState} from 'react'
 import {
   Table,
   Thead,
@@ -114,16 +114,31 @@ export function Dialog({openDialog, setOpenDialog, tamuData, dialogType}) {
   const cancelRef = React.useRef()
   const [isLoading, setIsLoading] = useState(false)
   const [input, setInput] = useState({
-		nama: tamuData?.nama,
-		alamat: tamuData?.alamat,
-		hp: tamuData?.hp,
-		jenisKelamin: tamuData?.jenisKelamin,
-		asalInstansi: tamuData?.asalInstansi,
-		orangYgDitemui: tamuData?.orangYgDitemui,
-		keperluan: tamuData?.keperluan,
-    status: tamuData?.status,
-    keterangan: tamuData?.keterangan
+		nama: '',
+		alamat: '',
+		hp: '',
+		jenisKelamin: '',
+		asalInstansi: '',
+		orangYgDitemui: '',
+		keperluan: '',
+    status: '',
+    keterangan: ''
   })
+
+  useEffect(() => {
+    setInput({
+      nama: tamuData?.nama,
+      alamat: tamuData?.alamat,
+      hp: tamuData?.hp,
+      jenisKelamin: tamuData?.jenisKelamin,
+      asalInstansi: tamuData?.asalInstansi,
+      orangYgDitemui: tamuData?.orangYgDitemui,
+      keperluan: tamuData?.keperluan,
+      status: tamuData?.status,
+      keterangan: tamuData?.keterangan
+    })
+  }, [tamuData])
+  
 
   function handleChange(e) {
 		setInput({...input, [e.target.name]: e.target.value})
